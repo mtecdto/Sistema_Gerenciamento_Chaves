@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.service.usuario.entity.StatusCodeJson;
 import com.service.usuario.entity.UserLoginObj;
 import com.service.usuario.entity.UsuarioEntity;
-import com.service.usuario.exceptions.NotFoundUserException;
 import com.service.usuario.service.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -28,24 +28,28 @@ public class UsuarioController {
 	private UsuarioService usuarioService;
 	
 	@PostMapping("/inserirusuario")
-	public ResponseEntity<UsuarioEntity> inserirUsuario(@RequestBody @Valid UsuarioEntity usuarioEntity){
+	public ResponseEntity<StatusCodeJson> inserirUsuario(@RequestBody @Valid UsuarioEntity usuarioEntity){
 		
-		UsuarioEntity usuario = usuarioService.saveUsuario(usuarioEntity);
+		StatusCodeJson statusCodeJson = usuarioService.saveUsuario(usuarioEntity);
 		
-		return ResponseEntity.ok().body(usuario);
+		return ResponseEntity.status(statusCodeJson.getStatuscode()).body(statusCodeJson);
 		
 	}
 	
 	@GetMapping("/getallusuarios")
 	public ResponseEntity<List<UsuarioEntity>> getAllUsuarios(){
 		
+		HttpStatus statusCodeGetAllUserRequest;
+		
 		List<UsuarioEntity> usuario = usuarioService.getAllUsuarios();
 		
-		if(usuario.isEmpty()) {
-			throw new NotFoundUserException("Not Found");
+		if(usuario == null) {
+			statusCodeGetAllUserRequest = HttpStatus.NOT_FOUND;
+		}else {
+			statusCodeGetAllUserRequest = HttpStatus.OK;
 		}
 		
-		return ResponseEntity.ok().body(usuario);
+		return ResponseEntity.status(statusCodeGetAllUserRequest).body(usuario);
 		
 	}
 
@@ -70,24 +74,16 @@ public class UsuarioController {
 		
 		List<UsuarioEntity> usuario = usuarioService.searchByUserName(nomeUser);
 		
-		if(usuario.isEmpty()) {
-			throw new NotFoundUserException("Not Found");
-		}
-		
 		return ResponseEntity.ok().body(usuario);
 		
 	}
 	
-	@GetMapping("/getusertologin/{emailtologin}")
-	public ResponseEntity<UserLoginObj> getUserToLogin(@PathVariable("emailtologin") @Valid String emailtologin){
-
-		UserLoginObj usuarioToLogin = usuarioService.findUserToLogin(emailtologin);
+	@PostMapping("/loginrequest")
+	public ResponseEntity<HttpStatus> loginRequest(@RequestBody UserLoginObj userLogin){
 		
-		if(usuarioToLogin == null) {
-			throw new NotFoundUserException("Not Found");
-		}
+		HttpStatus loginResponseStatusCode = usuarioService.findUserToLogin(userLogin);
 		
-		return ResponseEntity.ok().body(usuarioToLogin);
+		return ResponseEntity.status(loginResponseStatusCode).body(loginResponseStatusCode);
 		
 	}
 	

@@ -1,6 +1,12 @@
 package com.service.usuario.entity;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +20,9 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="usuario")
-public class UsuarioEntity {
+public class UsuarioEntity implements UserDetails{
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -103,6 +111,55 @@ public class UsuarioEntity {
 	public String toString() {
 		return "Usuario [Nome=" + nomeUsuario + ", UF=" + ufUsuario
 				+ ", Email=" + emailUsuario + "]";
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+
+		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		
+	}
+
+	@Override
+	public String getPassword() {
+
+		return senhaUsuario;
+		
+	}
+
+	@Override
+	public String getUsername() {
+		
+		return emailUsuario;
+		
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		
+		return true;
+		
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		
+		return true;
+		
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		
+		return true;
+		
+	}
+
+	@Override
+	public boolean isEnabled() {
+		
+		return true;
+		
 	}
 	
 }

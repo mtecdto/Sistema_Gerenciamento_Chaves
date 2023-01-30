@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.service.usuario.entity.StatusCodeJson;
@@ -19,9 +20,14 @@ public class UsuarioService {
 	
 	public StatusCodeJson saveUsuario(UsuarioEntity usuarioEntity) {
 
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		
 		String nameUsuario = usuarioEntity.getNomeUsuario();
 		usuarioEntity.setNomeUsuario(nameUsuario.toLowerCase());
 		
+		String passwordRequest = usuarioEntity.getSenhaUsuario();
+		String passwordEncoded = encoder.encode(passwordRequest);
+		usuarioEntity.setSenhaUsuario(passwordEncoded);
 		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
 		try {
@@ -80,7 +86,8 @@ public class UsuarioService {
 		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
 		UserLoginObj userRequest = userLogin;
-		String emailRequest = userLogin.getEmailUser(); 
+		String emailRequest = userLogin.getEmailUser();
+		
 		UsuarioEntity userFromBD = usuarioRepository.findByEmailUsuario(emailRequest);
 		
 		if(userFromBD == null) {
@@ -88,8 +95,8 @@ public class UsuarioService {
 			statusCodeJson.setMessage("This account does not exist");
 		}else {
 			
-			String emailResponse = userFromBD.getEmailUsuario();
-			String senhaResponse = userFromBD.getSenhaUsuario();
+			String emailResponse = userFromBD.getUsername();
+			String senhaResponse = userFromBD.getPassword();
 			
 			UserLoginObj userDBResponse = new UserLoginObj(emailResponse, senhaResponse);
 			

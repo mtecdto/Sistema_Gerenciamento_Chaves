@@ -1,6 +1,5 @@
 package com.service.usuario.service;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +18,22 @@ public class UsuarioService {
 	private UsuarioRepository usuarioRepository;
 	
 	public StatusCodeJson saveUsuario(UsuarioEntity usuarioEntity) {
+
+		String nameUsuario = usuarioEntity.getNomeUsuario();
+		usuarioEntity.setNomeUsuario(nameUsuario.toLowerCase());
 		
-		HttpStatus statuscodeResponse;
 		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
 		try {
 			
 			usuarioRepository.save(usuarioEntity);
-			statuscodeResponse = HttpStatus.CREATED;
-			statusCodeJson.setStatuscode(statuscodeResponse);
-			statusCodeJson.setMessage("Usuário "+usuarioEntity.getNomeUsuario()+" criado com sucesso");
+			statusCodeJson.setStatuscode(HttpStatus.CREATED);
+			statusCodeJson.setMessage(usuarioEntity.toString());
 			
 		} catch (Exception e) {
 			
-			System.out.println("EXECAO: "+e);
-			statuscodeResponse = HttpStatus.BAD_REQUEST;
-			statusCodeJson.setStatuscode(statuscodeResponse);
-			statusCodeJson.setMessage("Informações Inválidas");
+			statusCodeJson.setStatuscode(HttpStatus.BAD_REQUEST);
+			statusCodeJson.setMessage("Invalid information");
 			
 		}
 		
@@ -49,11 +47,25 @@ public class UsuarioService {
 		
 	}
 	
-	public HttpStatus deleteByIdUsuario(Long idUsuario) {
+	public StatusCodeJson deleteByIdUsuario(Long idUsuario) {
 		
-		usuarioRepository.deleteById(idUsuario);
+		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
-		return HttpStatus.OK;
+		try {
+			
+			usuarioRepository.deleteById(idUsuario);
+			statusCodeJson.setStatuscode(HttpStatus.OK);
+			statusCodeJson.setMessage("Deleted user");
+			
+		} catch (Exception e) {
+			
+			statusCodeJson.setStatuscode(HttpStatus.BAD_REQUEST);
+			statusCodeJson.setMessage("Error deleting");
+			
+		}
+		
+		
+		return statusCodeJson;
 		
 	}
 	
@@ -63,16 +75,17 @@ public class UsuarioService {
 		
 	}
 	
-	public HttpStatus findUserToLogin(UserLoginObj userLogin) {
+	public StatusCodeJson findUserToLogin(UserLoginObj userLogin) {
 		
-		HttpStatus statuscodeBDfindUser;
+		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
 		UserLoginObj userRequest = userLogin;
 		String emailRequest = userLogin.getEmailUser(); 
 		UsuarioEntity userFromBD = usuarioRepository.findByEmailUsuario(emailRequest);
 		
 		if(userFromBD == null) {
-			statuscodeBDfindUser = HttpStatus.NOT_FOUND;
+			statusCodeJson.setStatuscode(HttpStatus.NOT_FOUND);
+			statusCodeJson.setMessage("This account does not exist");
 		}else {
 			
 			String emailResponse = userFromBD.getEmailUsuario();
@@ -81,14 +94,16 @@ public class UsuarioService {
 			UserLoginObj userDBResponse = new UserLoginObj(emailResponse, senhaResponse);
 			
 			if(userRequest.equals(userDBResponse)) {
-				statuscodeBDfindUser = HttpStatus.OK;
+				statusCodeJson.setStatuscode(HttpStatus.OK);
+				statusCodeJson.setMessage("Login Sucessfull");
 			}else {
-				statuscodeBDfindUser = HttpStatus.UNAUTHORIZED;
+				statusCodeJson.setStatuscode(HttpStatus.UNAUTHORIZED);
+				statusCodeJson.setMessage("Incorrect Password");
 			}
 			
 		}
 
-		return statuscodeBDfindUser;
+		return statusCodeJson;
 		
 	}
 	

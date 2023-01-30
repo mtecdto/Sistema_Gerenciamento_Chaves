@@ -43,7 +43,7 @@ public class UsuarioController {
 		
 		List<UsuarioEntity> usuario = usuarioService.getAllUsuarios();
 		
-		if(usuario == null) {
+		if(usuario.isEmpty()) {
 			statusCodeGetAllUserRequest = HttpStatus.NOT_FOUND;
 		}else {
 			statusCodeGetAllUserRequest = HttpStatus.OK;
@@ -54,36 +54,41 @@ public class UsuarioController {
 	}
 
 	@DeleteMapping("/deletarusuario/{id}")
-	public ResponseEntity<HttpStatus> deletarUsuario(@PathVariable("id") @Valid Long id){
+	public ResponseEntity<StatusCodeJson> deletarUsuario(@PathVariable("id") @Valid Long id){
 		
-		try {
-			
-			usuarioService.deleteByIdUsuario(id);
-			return ResponseEntity.ok().build();
-			
-		} catch (Exception e) {
-			
-			return ResponseEntity.notFound().build();
-			
-		}
+		StatusCodeJson statusCodeJson = usuarioService.deleteByIdUsuario(id);
+		
+		return ResponseEntity.status(statusCodeJson.getStatuscode()).body(statusCodeJson);
 		
 	}
 	
 	@GetMapping("/filtrarusuario/{nomeusuario}")
-	public ResponseEntity<List<UsuarioEntity>> filtrarUsuarioNome(@PathVariable("nomeusuario") @Valid String nomeUser){
+	public ResponseEntity<StatusCodeJson> filtrarUsuarioNome(@PathVariable("nomeusuario") @Valid String nomeUser){
 		
-		List<UsuarioEntity> usuario = usuarioService.searchByUserName(nomeUser);
+		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
-		return ResponseEntity.ok().body(usuario);
+		String nomeUserToLowerCase = nomeUser.toLowerCase();
+		
+		List<UsuarioEntity> usuarios = usuarioService.searchByUserName(nomeUserToLowerCase);
+		
+		if(usuarios.isEmpty()) {
+			statusCodeJson.setStatuscode(HttpStatus.NOT_FOUND);
+			statusCodeJson.setMessage("No users found");
+		}else {
+			statusCodeJson.setStatuscode(HttpStatus.OK);
+			statusCodeJson.setMessage(usuarios.toString());
+		}
+		
+		return ResponseEntity.status(statusCodeJson.getStatuscode()).body(statusCodeJson);
 		
 	}
 	
 	@PostMapping("/loginrequest")
-	public ResponseEntity<HttpStatus> loginRequest(@RequestBody UserLoginObj userLogin){
+	public ResponseEntity<StatusCodeJson> loginRequest(@RequestBody UserLoginObj userLogin){
 		
-		HttpStatus loginResponseStatusCode = usuarioService.findUserToLogin(userLogin);
+		StatusCodeJson statusCodeJson = usuarioService.findUserToLogin(userLogin);
 		
-		return ResponseEntity.status(loginResponseStatusCode).body(loginResponseStatusCode);
+		return ResponseEntity.status(statusCodeJson.getStatuscode()).body(statusCodeJson);
 		
 	}
 	

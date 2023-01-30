@@ -98,5 +98,11 @@ public class UsuarioEntity {
 				&& Objects.equals(nomeUsuario, other.nomeUsuario) && Objects.equals(senhaUsuario, other.senhaUsuario)
 				&& Objects.equals(ufUsuario, other.ufUsuario);
 	}
+
+	@Override
+	public String toString() {
+		return "Usuario [Nome=" + nomeUsuario + ", UF=" + ufUsuario
+				+ ", Email=" + emailUsuario + "]";
+	}
 	
 }

@@ -83,9 +83,9 @@ public class UsuarioService {
 	
 	public StatusCodeJson findUserToLogin(UserLoginObj userLogin) {
 		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		StatusCodeJson statusCodeJson = new StatusCodeJson();
 		
-		UserLoginObj userRequest = userLogin;
 		String emailRequest = userLogin.getEmailUser();
 		
 		UsuarioEntity userFromBD = usuarioRepository.findByEmailUsuario(emailRequest);
@@ -95,14 +95,13 @@ public class UsuarioService {
 			statusCodeJson.setMessage("This account does not exist");
 		}else {
 			
-			String emailResponse = userFromBD.getUsername();
-			String senhaResponse = userFromBD.getPassword();
+			String senhaRaw = userLogin.getSenhaUser();
+			String senhaEncoded = userFromBD.getPassword();
 			
-			UserLoginObj userDBResponse = new UserLoginObj(emailResponse, senhaResponse);
-			
-			if(userRequest.equals(userDBResponse)) {
+			if(encoder.matches(senhaRaw, senhaEncoded)) {
 				statusCodeJson.setStatuscode(HttpStatus.OK);
 				statusCodeJson.setMessage("Login Sucessfull");
+				statusCodeJson.setToken(senhaEncoded);
 			}else {
 				statusCodeJson.setStatuscode(HttpStatus.UNAUTHORIZED);
 				statusCodeJson.setMessage("Incorrect Password");

@@ -6,6 +6,7 @@ public class StatusCodeJson {
 
 	private HttpStatus statuscode;
 	private String message;
+	private String token;
 
 	public HttpStatus getStatuscode() {
 		return statuscode;
@@ -23,9 +24,17 @@ public class StatusCodeJson {
 		this.message = message;
 	}
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	@Override
 	public String toString() {
-		return "StatusCodeJson [statuscode=" + statuscode + ", message=" + message + "]";
+		return "StatusCodeJson [statuscode=" + statuscode + ", message=" + message + ", token=" + token + "]";
 	}
 	
 }

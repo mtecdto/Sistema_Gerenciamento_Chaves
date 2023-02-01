@@ -1,10 +1,10 @@
-package com.service.usuario;
+package com.service.userlogin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UsuarioApplicationTests {
+class UserloginApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,4 +1,4 @@
-package com.service.usuario.entity;
+package com.service.userlogin.entity;
 
 import org.springframework.http.HttpStatus;
 

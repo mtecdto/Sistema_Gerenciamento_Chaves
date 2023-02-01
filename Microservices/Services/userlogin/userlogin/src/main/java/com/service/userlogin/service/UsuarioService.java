@@ -1,4 +1,4 @@
-package com.service.usuario.service;
+package com.service.userlogin.service;
 
 import java.util.List;
 
@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.service.usuario.entity.StatusCodeJson;
-import com.service.usuario.entity.UserLoginObj;
-import com.service.usuario.entity.UsuarioEntity;
-import com.service.usuario.repository.UsuarioRepository;
+import com.service.userlogin.entity.StatusCodeJson;
+import com.service.userlogin.entity.UserLoginObj;
+import com.service.userlogin.entity.UsuarioEntity;
+import com.service.userlogin.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
@@ -96,7 +96,7 @@ public class UsuarioService {
 		}else {
 			
 			String senhaRaw = userLogin.getSenhaUser();
-			String senhaEncoded = userFromBD.getPassword();
+			String senhaEncoded = userFromBD.getSenhaUsuario();
 			
 			if(encoder.matches(senhaRaw, senhaEncoded)) {
 				statusCodeJson.setStatuscode(HttpStatus.OK);

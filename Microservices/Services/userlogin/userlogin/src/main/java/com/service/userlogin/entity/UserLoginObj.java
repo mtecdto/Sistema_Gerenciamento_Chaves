@@ -1,4 +1,4 @@
-package com.service.usuario.entity;
+package com.service.userlogin.entity;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.service.usuario.controller;
+package com.service.userlogin.controller;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.service.usuario.entity.StatusCodeJson;
-import com.service.usuario.entity.UserLoginObj;
-import com.service.usuario.entity.UsuarioEntity;
-import com.service.usuario.service.UsuarioService;
+import com.service.userlogin.entity.StatusCodeJson;
+import com.service.userlogin.entity.UserLoginObj;
+import com.service.userlogin.entity.UsuarioEntity;
+import com.service.userlogin.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
